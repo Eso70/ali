@@ -1,0 +1,885 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@font-face {
+  font-family: "KurdishFont";
+  src: url("/fonts/KurdishFont.woff") format("woff"),
+    url("/fonts/KurdishFont.ttf") format("truetype"),
+    url("/fonts/KurdishFont.eot") format("embedded-opentype");
+  font-display: swap;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: "KurdishFont", Arial, Helvetica, sans-serif;
+  --font-mono: "KurdishFont", monospace;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  
+  /* Primary Brand Colors - Red color palette */
+  --color-brand-50: #fef2f2;
+  --color-brand-100: #fee2e2;
+  --color-brand-200: #fecaca;
+  --color-brand-300: #fca5a5;
+  --color-brand-400: #f87171;
+  --color-brand-500: #ef4444;
+  --color-brand-600: #dc2626;
+  --color-brand-700: #b91c1c;
+  --color-brand-800: #991b1b;
+  --color-brand-900: #7f1d1d;
+  --color-brand-950: #450a0a;
+  
+  /* Primary color aliases for easy reference */
+  --color-primary-yellow: var(--color-brand-400);
+  --color-primary-yellow-light: var(--color-brand-300);
+  --color-primary-yellow-dark: var(--color-brand-500);
+  --color-primary-yellow-hover: var(--color-brand-500);
+  
+  /* Background Colors - Easy to change globally */
+  --color-bg-primary: #ffffff;
+  --color-bg-primary-50: rgba(255, 255, 255, 0.5);
+  --color-bg-primary-80: rgba(255, 255, 255, 0.8);
+  --color-bg-primary-90: rgba(255, 255, 255, 0.9);
+  --color-bg-primary-95: rgba(255, 255, 255, 0.95);
+}
+
+:root {
+  /* Theme Colors - Update these to change the entire system */
+  --theme-bg-from: #0b1224; /* midnight navy */
+  --theme-bg-via: #1b2a45;  /* deep indigo */
+  --theme-bg-to: #2d2147;   /* twilight violet */
+  
+  /* Blur orb colors - deep navy, indigo, and warm amber highlights */
+  --theme-blur-1: #1e3a8a;
+  --theme-blur-1-opacity: 32;
+  --theme-blur-2: #0f172a;
+  --theme-blur-2-opacity: 26;
+  --theme-blur-3: #f59e0b;
+  --theme-blur-3-opacity: 22;
+  --theme-blur-4: #312e81;
+  --theme-blur-4-opacity: 28;
+  --theme-blur-5: #b7791f;
+  --theme-blur-5-opacity: 22;
+  
+  --theme-primary: #037ea7;
+  
+  /* Button colors - Red gradient */
+  --theme-button-from: rgba(248, 113, 113, 0.7); /* Red-400 */
+  --theme-button-via: rgba(239, 68, 68, 0.8); /* Red-500 */
+  --theme-button-to: rgba(248, 113, 113, 0.7); /* Red-400 */
+  --theme-button-hover-from: rgba(248, 113, 113, 0.85); /* Brighter red */
+  --theme-button-hover-via: rgba(239, 68, 68, 0.9); /* Brighter red */
+  --theme-button-hover-to: rgba(248, 113, 113, 0.85); /* Brighter red */
+  
+  /* Input colors - Grey gradient matching background */
+  --theme-input-bg: rgba(75, 85, 99, 0.4); /* Grey-600 with opacity */
+  --theme-input-border: rgba(107, 114, 128, 0.5); /* Grey-500 */
+  --theme-input-focus-border: rgba(239, 68, 68, 0.7); /* Red accent */
+  --theme-input-focus-bg: rgba(75, 85, 99, 0.6); /* Darker grey on focus */
+  
+  --theme-text-primary: #ffffff;
+  --theme-text-secondary: rgba(209, 213, 219, 1);
+  --theme-text-placeholder: rgba(156, 163, 175, 1);
+  
+  --theme-error-bg: rgba(239, 68, 68, 0.15);
+  --theme-error-border: rgba(248, 113, 113, 0.6);
+  --theme-error-text: rgba(254, 202, 202, 1);
+  
+  --theme-success-bg: rgba(34, 197, 94, 0.15);
+  --theme-success-border: rgba(74, 222, 128, 0.6);
+  --theme-success-text: rgba(187, 247, 208, 1);
+  
+  --theme-warning-bg: rgba(234, 179, 8, 0.15);
+  --theme-warning-border: rgba(250, 204, 21, 0.6);
+  --theme-warning-text: rgba(254, 240, 138, 1);
+  
+  --theme-info-bg: rgba(59, 130, 246, 0.15);
+  --theme-info-border: rgba(96, 165, 250, 0.6);
+  --theme-info-text: rgba(191, 219, 254, 1);
+  
+  --theme-logo-glow-from: #6366f1;
+  --theme-logo-glow-via: #a855f7;
+  --theme-logo-glow-to: #ec4899;
+  --theme-logo-glow-opacity: 80;
+}
+
+body {
+  /* Fallback for browsers that don't support CSS variables */
+  background: #4b5563;
+  /* Modern browsers with CSS variable support */
+  background: linear-gradient(to bottom, var(--theme-bg-from), var(--theme-bg-via), var(--theme-bg-to));
+  /* Safari/iOS: background-attachment: fixed has performance issues, use scroll instead */
+  background-attachment: scroll;
+  color: var(--foreground);
+  font-family: "KurdishFont", Arial, Helvetica, sans-serif;
+  /* iOS Safari: Use CSS variable for viewport height */
+  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
+  overflow-x: hidden;
+  /* Safari/iOS: Prevent text size adjustment */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Browser compatibility: Ensure proper rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Prevent scroll lag on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Static gradient background for all themed pages */
+[data-theme-background] {
+  background-size: 180% 180%;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme-background]::after {
+  content: "";
+  position: absolute;
+  inset: -40% -20%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  filter: blur(70px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+
+
+
+/* Static color swatches */
+.background-swatch {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.background-swatch::before,
+.background-swatch::after {
+  content: "";
+  position: absolute;
+  inset: -55%;
+  pointer-events: none;
+}
+
+.background-swatch::before {
+  background: radial-gradient(circle at 30% 30%, rgba(247, 189, 67, 0.5), rgba(247, 189, 67, 0));
+  opacity: 0.45;
+}
+
+.background-swatch::after {
+  background: linear-gradient(120deg, transparent 5%, rgba(255, 255, 255, 0.45) 48%, transparent 90%);
+  mix-blend-mode: screen;
+  opacity: 0.5;
+}
+
+/* Reusable spotlight shimmer for buttons - static */
+.btn-spotlight {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Minimal, GPU-friendly bounce for the down arrow emoji */
+.arrow-bounce {
+  animation: arrow-bounce 1.5s ease-in-out infinite;
+  will-change: transform;
+  display: inline-block;
+}
+
+@keyframes arrow-bounce {
+  0%, 100% { 
+    transform: translateY(0); 
+  }
+  50% { 
+    transform: translateY(8px); 
+  }
+}
+
+/* Slower emoji animation on mobile to match desktop feel */
+@media (max-width: 768px) {
+  .arrow-bounce {
+    animation: arrow-bounce 2s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow-bounce {
+    animation: none;
+  }
+}
+
+/* Mobile Responsive Base Styles - Safari/iOS Optimized */
+@media (max-width: 640px) {
+  body {
+    font-size: 16px; /* Better for mobile readability */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevent iOS Safari bounce scrolling */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  * {
+    -webkit-tap-highlight-color: transparent;
+    /* Improve touch responsiveness on iOS */
+    -webkit-touch-callout: none;
+  }
+  
+  /* Ensure touch targets are at least 44x44px (Apple HIG requirement) */
+  button, a, input, select, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+    /* Improve touch response on iOS */
+    touch-action: manipulation;
+  }
+  
+  /* Prevent zoom on input focus (iOS Safari) */
+  input, select, textarea {
+    font-size: 16px !important;
+    /* Prevent iOS Safari from zooming on input focus */
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
+  
+  /* Fix iOS Safari viewport height issue */
+  html {
+    height: -webkit-fill-available;
+  }
+  
+  body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Safe area insets for mobile devices with notches */
+.safe-area-inset {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Touch manipulation for better mobile performance */
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Fix touch interactions on iOS - Critical for button responsiveness */
+button, 
+a, 
+[role="button"],
+.clickable {
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  /* Hardware acceleration for better performance */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Ensure interactive elements are tappable */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Fix viewport height issues on iOS */
+:root {
+  --vh: 1vh;
+}
+
+/* Use this instead of 100vh for better iOS support */
+.full-height {
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+}
+
+/* Fix position: fixed issues on iOS */
+.fixed-element {
+  position: fixed;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Hardware acceleration for animated elements */
+.animated-element,
+.scroll-container,
+.modal,
+.sidebar {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Performance optimizations for background animations */
+[data-theme-background] {
+  contain: layout style paint;
+  isolation: isolate;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* Optimize blur performance - use GPU acceleration */
+.blur-\[150px\],
+.blur-\[170px\] {
+  will-change: transform, filter;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spotlight {
+    animation: none !important;
+    -webkit-animation: none !important;
+  }
+}
+
+
+/* Performance: Optimize blur effects */
+.blur-\[150px\],
+.blur-\[170px\] {
+  /* Reduce blur on low-end devices for better performance */
+  @media (max-width: 768px) {
+    filter: blur(100px) !important;
+    -webkit-filter: blur(100px) !important;
+  }
+}
+
+/* Mobile Performance: Reduce expensive effects */
+@media (max-width: 768px) {
+  /* Reduce backdrop blur on mobile - very expensive */
+  [class*="backdrop-blur"] {
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+  }
+  
+  /* Reduce shadow complexity on mobile */
+  [class*="shadow-"] {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)) !important;
+  }
+  
+  /* Disable mix-blend-mode on mobile - very expensive */
+  [style*="mix-blend-mode"],
+  [class*="mix-blend"] {
+    mix-blend-mode: normal !important;
+  }
+  
+  /* Disable all background animations on mobile */
+  [class*="animate-blob"],
+  [class*="animate-pulse"] {
+    animation: none !important;
+  }
+  
+  /* Optimize animations on mobile - only allow simple fade-ins */
+  * {
+    animation-duration: 0.3s !important;
+    transition-duration: 0.2s !important;
+  }
+  
+  /* Reduce transform complexity */
+  [style*="transform"] {
+    transform: translateZ(0) !important;
+    will-change: auto !important;
+  }
+}
+
+/* Performance: Optimize button hover effects */
+.hover-bright {
+  filter: brightness(1.1);
+  -webkit-filter: brightness(1.1);
+}
+
+/* Performance: Reduce repaints on scroll */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Performance: Optimize image rendering */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Performance: Reduce layout shifts */
+[data-theme-background] {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 100vh;
+}
+
+:root {
+  --radius: 0.625rem;
+  /* Dark blue background from logo */
+  --background: oklch(0.22 0.05 250);
+  --foreground: oklch(0.95 0.02 200);
+  --card: oklch(0.28 0.06 250);
+  --card-foreground: oklch(0.95 0.02 200);
+  --popover: oklch(0.28 0.06 250);
+  --popover-foreground: oklch(0.95 0.02 200);
+  /* Primary cyan from logo - vibrant cyan */
+  --primary: oklch(0.65 0.18 200);
+  --primary-foreground: oklch(0.15 0.05 250);
+  /* Secondary light cyan from logo gradient */
+  --secondary: oklch(0.45 0.12 200);
+  --secondary-foreground: oklch(0.95 0.02 200);
+  --muted: oklch(0.32 0.06 250);
+  --muted-foreground: oklch(0.75 0.08 200);
+  --accent: oklch(0.55 0.15 200);
+  --accent-foreground: oklch(0.15 0.05 250);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.35 0.06 250);
+  --input: oklch(0.35 0.06 250);
+  --ring: oklch(0.65 0.18 200);
+  --chart-1: oklch(0.65 0.18 200);
+  --chart-2: oklch(0.55 0.15 200);
+  --chart-3: oklch(0.45 0.12 200);
+  --chart-4: oklch(0.75 0.10 200);
+  --chart-5: oklch(0.85 0.08 200);
+  --sidebar: oklch(0.25 0.05 250);
+  --sidebar-foreground: oklch(0.95 0.02 200);
+  --sidebar-primary: oklch(0.65 0.18 200);
+  --sidebar-primary-foreground: oklch(0.15 0.05 250);
+  --sidebar-accent: oklch(0.35 0.08 200);
+  --sidebar-accent-foreground: oklch(0.95 0.02 200);
+  --sidebar-border: oklch(0.35 0.06 250);
+  --sidebar-ring: oklch(0.65 0.18 200);
+}
+
+.dark {
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.21 0.006 285.885);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.21 0.006 285.885);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.92 0.004 286.32);
+  --primary-foreground: oklch(0.21 0.006 285.885);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.552 0.016 285.938);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.21 0.006 285.885);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.274 0.006 286.033);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.552 0.016 285.938);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  /* Brand color utilities - Use these instead of hardcoded yellow/amber */
+  .bg-brand-50 { background-color: var(--color-brand-50); }
+  .bg-brand-100 { background-color: var(--color-brand-100); }
+  .bg-brand-200 { background-color: var(--color-brand-200); }
+  .bg-brand-300 { background-color: var(--color-brand-300); }
+  .bg-brand-400 { background-color: var(--color-brand-400); }
+  .bg-brand-500 { background-color: var(--color-brand-500); }
+  .bg-brand-600 { background-color: var(--color-brand-600); }
+  .bg-brand-700 { background-color: var(--color-brand-700); }
+  .bg-brand-800 { background-color: var(--color-brand-800); }
+  .bg-brand-900 { background-color: var(--color-brand-900); }
+  .bg-brand-950 { background-color: var(--color-brand-950); }
+  
+  .text-brand-50 { color: var(--color-brand-50); }
+  .text-brand-100 { color: var(--color-brand-100); }
+  .text-brand-200 { color: var(--color-brand-200); }
+  .text-brand-300 { color: var(--color-brand-300); }
+  .text-brand-400 { color: var(--color-brand-400); }
+  .text-brand-500 { color: var(--color-brand-500); }
+  .text-brand-600 { color: var(--color-brand-600); }
+  .text-brand-700 { color: var(--color-brand-700); }
+  .text-brand-800 { color: var(--color-brand-800); }
+  .text-brand-900 { color: var(--color-brand-900); }
+  .text-brand-950 { color: var(--color-brand-950); }
+  
+  .border-brand-50 { border-color: var(--color-brand-50); }
+  .border-brand-100 { border-color: var(--color-brand-100); }
+  .border-brand-200 { border-color: var(--color-brand-200); }
+  .border-brand-300 { border-color: var(--color-brand-300); }
+  .border-brand-400 { border-color: var(--color-brand-400); }
+  .border-brand-500 { border-color: var(--color-brand-500); }
+  .border-brand-600 { border-color: var(--color-brand-600); }
+  .border-brand-700 { border-color: var(--color-brand-700); }
+  .border-brand-800 { border-color: var(--color-brand-800); }
+  .border-brand-900 { border-color: var(--color-brand-900); }
+  .border-brand-950 { border-color: var(--color-brand-950); }
+  
+  /* Primary background utilities - Use these instead of hardcoded white */
+  .bg-primary { background-color: var(--color-bg-primary); }
+  .bg-primary-50 { background-color: var(--color-bg-primary-50); }
+  .bg-primary-80 { background-color: var(--color-bg-primary-80); }
+  .bg-primary-90 { background-color: var(--color-bg-primary-90); }
+  .bg-primary-95 { background-color: var(--color-bg-primary-95); }
+  
+  /* Ensure table rows have white backgrounds by default */
+  table tbody tr {
+    background-color: var(--color-bg-primary) !important;
+  }
+  
+  table thead tr {
+    background-color: var(--color-bg-primary) !important;
+  }
+  
+  /* Override root layout background for login and admin pages */
+  body > div[data-theme-background] > div:has([href*="/login"]),
+  body > div[data-theme-background] > div:has([href*="/admin"]) {
+    background: #ffffff !important;
+    background-image: none !important;
+  }
+  
+  /* Ensure login page container has white background */
+  [href*="/login"] ~ *,
+  [href*="/admin"] ~ * {
+    background: #ffffff !important;
+  }
+  
+  /* Force white background for admin dashboard on all screen sizes */
+  body > div[data-theme-background] > div:has([data-admin-dashboard]) {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+  }
+  
+  /* Ensure admin dashboard wrapper has white background */
+  [data-admin-dashboard] {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+  }
+  
+  /* Ensure admin main content area has white background */
+  [data-admin-dashboard] > main {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+  }
+  
+  /* Brand gradient utilities - Use these for all yellow/amber gradient buttons */
+  .bg-gradient-brand { 
+    background: linear-gradient(to right, var(--color-brand-400), var(--color-brand-400), var(--color-brand-400)); 
+  }
+  .bg-gradient-brand-hover { 
+    background: linear-gradient(to right, var(--color-brand-500), var(--color-brand-500), var(--color-brand-500)); 
+  }
+  .bg-gradient-brand-button {
+    background: linear-gradient(to right, var(--color-brand-400), var(--color-brand-400), var(--color-brand-400));
+  }
+  .bg-gradient-brand-button:hover {
+    background: linear-gradient(to right, var(--color-brand-500), var(--color-brand-500), var(--color-brand-500));
+  }
+  
+  /* Cursor pointer for all interactive elements */
+  button,
+  [role="button"],
+  a,
+  select,
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="file"],
+  label,
+  [role="menuitem"],
+  [role="option"],
+  [role="tab"],
+  [role="switch"],
+  [role="combobox"],
+  [role="listbox"],
+  summary,
+  [tabindex]:not([tabindex="-1"]) {
+    @apply cursor-pointer;
+  }
+  
+  /* Clickable divs and spans (common pattern for custom buttons) */
+  div[onclick],
+  span[onclick],
+  div[class*="button"],
+  div[class*="clickable"],
+  [data-clickable="true"] {
+    @apply cursor-pointer;
+  }
+  
+  /* Disabled elements should not have pointer cursor */
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  input:disabled,
+  select:disabled,
+  a[aria-disabled="true"],
+  [aria-disabled="true"] {
+    @apply cursor-not-allowed;
+  }
+}
+
+/* Custom Animations */
+/* Browser compatibility: Add vendor prefixes for animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@-webkit-keyframes fade-in-up {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    -webkit-transform: translateX(-5px);
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    -webkit-transform: translateX(5px);
+    transform: translateX(5px);
+  }
+}
+
+/* Beautiful button spotlight animation */
+@keyframes spotlight {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes spotlight {
+  0% {
+    -webkit-transform: translateX(-100%) skewX(-15deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: translateX(200%) skewX(-15deg);
+    opacity: 0;
+  }
+}
+
+.animate-spotlight {
+  animation: spotlight 3s linear infinite;
+  -webkit-animation: spotlight 3s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+
+
+
+@-webkit-keyframes shake {
+  0%, 100% {
+    -webkit-transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    -webkit-transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    -webkit-transform: translateX(5px);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    -webkit-transform: translateX(30px);
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+}
+
+@-webkit-keyframes slide-in-right {
+  from {
+    opacity: 0;
+    -webkit-transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateX(0);
+  }
+}
+
+.animate-fade-in {
+  -webkit-animation: fade-in 0.6s ease-out;
+  animation: fade-in 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+  -webkit-animation: fade-in-up 0.6s ease-out;
+  animation: fade-in-up 0.6s ease-out;
+}
+
+.animate-shake {
+  -webkit-animation: shake 0.5s ease-in-out;
+  animation: shake 0.5s ease-in-out;
+}
+
+.animate-slide-in-right {
+  -webkit-animation: slide-in-right 0.6s ease-out;
+  animation: slide-in-right 0.6s ease-out;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+  animation-fill-mode: both;
+}
+
+.delay-300 {
+  animation-delay: 0.3s;
+  animation-fill-mode: both;
+}
+
+.delay-400 {
+  animation-delay: 0.4s;
+  animation-fill-mode: both;
+}
+
+.delay-500 {
+  animation-delay: 0.5s;
+  animation-fill-mode: both;
+}
+
+.delay-1000 {
+  animation-delay: 1s;
+}
+
+.delay-2000 {
+  animation-delay: 2s;
+}
+
+/* Custom Scrollbar for DateTimePicker */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

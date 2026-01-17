@@ -1,0 +1,286 @@
+/* Cross-browser and cross-device compatibility styles for login page */
+
+/* Viewport height fix for all browsers */
+:root {
+  --vh: 1vh;
+}
+
+/* iOS Safari viewport height fix */
+@supports (-webkit-touch-callout: none) {
+  :root {
+    --vh: 1vh;
+  }
+  
+  html {
+    height: -webkit-fill-available;
+  }
+  
+  body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Input field cross-browser compatibility */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  /* Prevent iOS Safari zoom on focus */
+  font-size: 16px !important;
+  
+  /* Remove default browser styling */
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  appearance: none;
+  
+  /* Remove tap highlight */
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+  
+  /* Remove outline on focus (we use custom ring) */
+  outline: none;
+  -webkit-outline: none;
+  
+  /* Better text rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Firefox input styling */
+input[type="text"]::-moz-placeholder,
+input[type="password"]::-moz-placeholder {
+  opacity: 0.4;
+}
+
+input[type="text"]::placeholder,
+input[type="password"]::placeholder {
+  opacity: 0.4;
+}
+
+/* IE/Edge input styling */
+input[type="text"]::-ms-input-placeholder,
+input[type="password"]::-ms-input-placeholder {
+  opacity: 0.4;
+}
+
+/* Remove number input spinners (cross-browser) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Button cross-browser compatibility */
+button {
+  /* Remove tap highlight */
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+  
+  /* Prevent text selection */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  
+  /* Disable iOS callout */
+  -webkit-touch-callout: none;
+  
+  /* Better touch response */
+  touch-action: manipulation;
+  
+  /* Remove default button styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  /* Better text rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Backdrop blur fallback for browsers that don't support it */
+@supports not (backdrop-filter: blur(10px)) {
+  .backdrop-blur-xl,
+  .backdrop-blur-md,
+  .backdrop-blur-sm {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* Gradient fallback for older browsers */
+@supports not (background: linear-gradient(to bottom, #000, #fff)) {
+  .bg-gradient-to-br {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+/* Transform fallback */
+@supports not (transform: translateY(0)) {
+  .-translate-y-1\/2 {
+    position: relative;
+    top: 50%;
+    margin-top: -50%;
+  }
+}
+
+/* Flexbox fallback for very old browsers */
+@supports not (display: flex) {
+  .flex {
+    display: block;
+  }
+  
+  .flex-col {
+    display: block;
+  }
+  
+  .items-center {
+    text-align: center;
+  }
+  
+  .justify-center {
+    text-align: center;
+  }
+}
+
+/* Safe area insets for notched devices */
+.safe-area-inset {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  
+  /* Fallback for browsers that don't support env() */
+  padding-top: constant(safe-area-inset-top);
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-left: constant(safe-area-inset-left);
+  padding-right: constant(safe-area-inset-right);
+}
+
+/* RTL (Right-to-Left) support */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Mobile/touch devices */
+  button:hover,
+  a:hover {
+    /* Disable hover effects on touch devices */
+    transform: none !important;
+  }
+  
+  /* Larger touch targets */
+  button,
+  a,
+  input,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2),
+       (min-resolution: 192dpi) {
+  /* Better text rendering on high DPI screens */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* Reduced motion support (accessibility) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode support (if needed in future) */
+@media (prefers-color-scheme: dark) {
+  /* Already using dark theme, so this is handled */
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  input,
+  button {
+    border-width: 2px !important;
+  }
+}
+
+/* Landscape orientation fixes */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  .min-h-screen {
+    min-height: auto !important;
+  }
+}
+
+/* Very small screens */
+@media screen and (max-width: 320px) {
+  body {
+    font-size: 14px;
+  }
+  
+  input,
+  button {
+    font-size: 14px !important;
+  }
+}
+
+/* Large screens */
+@media screen and (min-width: 1920px) {
+  .max-w-md {
+    max-width: 28rem;
+  }
+}
+
+/* IE 11 specific fixes */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .flex {
+    display: -ms-flexbox;
+  }
+  
+  .flex-col {
+    -ms-flex-direction: column;
+  }
+  
+  .items-center {
+    -ms-flex-align: center;
+  }
+  
+  .justify-center {
+    -ms-flex-pack: center;
+  }
+}

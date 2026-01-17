@@ -1,0 +1,50 @@
+{
+  "name": "ali-network",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "start:prod": "cross-env NODE_ENV=production next start -p 3001",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop ali-network",
+    "pm2:restart": "pm2 restart ali-network",
+    "pm2:delete": "pm2 delete ali-network",
+    "pm2:logs": "pm2 logs ali-network",
+    "pm2:monit": "pm2 monit",
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit",
+    "db:drop": "node scripts/drop-all.js",
+    "db:migrate": "node scripts/migrate.js",
+    "db:reset": "npm run db:drop && npm run db:migrate",
+    "postinstall": "echo 'Installation complete. Run npm run build before starting production server.'"
+  },
+  "dependencies": {
+    "lucide-react": "^0.562.0",
+    "next": "16.1.1",
+    "pg": "^8.11.3",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-icons": "^5.5.0",
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/pg": "^8.10.9",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.1",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5"
+  },
+  "overrides": {
+    "rimraf": "^5.0.0",
+    "glob": "^10.3.0",
+    "inflight": "npm:@isaacs/inflight@^1.0.6"
+  }
+}
