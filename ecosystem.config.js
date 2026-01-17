@@ -12,8 +12,13 @@ module.exports = {
       
       // Cluster mode - Use reasonable number of instances (leave resources for other apps)
       // Default: 4 instances (can be changed via PM2_INSTANCES env variable)
+      // Set PM2_INSTANCES=max to use all CPU cores, or a number for specific count
       // For 12-core VPS: 4 instances leaves 8 cores for system and other applications
-      instances: process.env.PM2_INSTANCES ? parseInt(process.env.PM2_INSTANCES, 10) : 4,
+      instances: process.env.PM2_INSTANCES === 'max' 
+        ? 'max' 
+        : process.env.PM2_INSTANCES 
+          ? parseInt(process.env.PM2_INSTANCES, 10) 
+          : 4,
       exec_mode: 'cluster', // Cluster mode for load balancing
       
       // Environment variables
