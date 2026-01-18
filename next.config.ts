@@ -67,6 +67,17 @@ const nextConfig: NextConfig = {
     ],
   },
   
+  // Rewrite /images/upload/ to API route for serving uploaded images
+  // This is needed because Next.js doesn't serve files added to public/ after build
+  async rewrites() {
+    return [
+      {
+        source: '/images/upload/:path*',
+        destination: '/api/images/:path*',
+      },
+    ];
+  },
+  
   // Headers for security, CORS, and NO CACHING
   async headers() {
     const allowedOrigins = getAllowedCorsOrigins();
