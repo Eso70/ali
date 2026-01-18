@@ -1,6 +1,6 @@
 /**
  * PostgreSQL Database Client
- * Replaces Supabase with direct PostgreSQL connection
+ * Direct PostgreSQL connection using connection pooling
  */
 
 import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';

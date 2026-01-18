@@ -287,7 +287,7 @@ DROP TABLE IF EXISTS linktrees CASCADE;
 DROP TABLE IF EXISTS admin_sessions CASCADE;
 DROP TABLE IF EXISTS admins CASCADE;
 
--- Drop any remaining user tables in public schema (keeps system tables like supabase_migrations)
+-- Drop any remaining user tables in public schema (keeps migration tracking tables if they exist)
 DO $$
 DECLARE
     table_record RECORD;

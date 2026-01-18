@@ -191,12 +191,11 @@ const linktreeBaseSchema = z.object({
           val.startsWith("http://") ||
           val.startsWith("https://") ||
           val.startsWith("/") ||
-          val.startsWith("data:image/") ||
-          val.includes("supabase.co/storage")
+          val.startsWith("data:image/")
         );
       },
       {
-        message: "Image must be a valid URL, relative path, data URL, or Supabase storage URL",
+        message: "Image must be a valid URL, relative path, or data URL",
       }
     )
     .optional()

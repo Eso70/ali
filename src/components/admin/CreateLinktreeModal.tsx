@@ -357,7 +357,7 @@ export const CreateLinktreeModal = memo(function CreateLinktreeModal({
     }
   }, []);
 
-  // Upload image to Supabase Storage
+  // Upload image to local file system storage
   const uploadImage = async (file: File): Promise<string | null> => {
     try {
       const formData = new FormData();
@@ -529,13 +529,12 @@ export const CreateLinktreeModal = memo(function CreateLinktreeModal({
       // Validate and set image
       if (linktree.image && typeof linktree.image === "string") {
         const imageUrl = linktree.image.trim();
-        // Accept valid URLs (absolute or relative) and Supabase storage URLs
+        // Accept valid URLs (absolute or relative) and data URLs
         if (
           imageUrl.startsWith("http://") ||
           imageUrl.startsWith("https://") ||
           imageUrl.startsWith("/") ||
-          imageUrl.startsWith("data:image/") ||
-          imageUrl.includes("supabase.co/storage")
+          imageUrl.startsWith("data:image/")
         ) {
           setProfileImagePreview(imageUrl);
         } else {

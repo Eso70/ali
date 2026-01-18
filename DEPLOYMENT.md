@@ -23,10 +23,12 @@ npm ci --production=false
 Create a `.env.production` file with:
 
 ```bash
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+# PostgreSQL Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=alinetwork
+DB_USER=postgres
+DB_PASSWORD=your-database-password
 
 # Application
 PORT=3001
@@ -334,7 +336,7 @@ pm2 reload ali-network
 
 ## Backup Recommendations
 
-1. **Database**: Backup Supabase database regularly
+1. **Database**: Backup PostgreSQL database regularly using `pg_dump`
 2. **Environment variables**: Keep `.env.production` backed up securely
 3. **Application files**: Use version control (Git)
 4. **PM2 process list**: `pm2 save` saves current configuration
