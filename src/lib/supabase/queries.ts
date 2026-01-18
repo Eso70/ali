@@ -443,23 +443,23 @@ export async function updateLinktree(
   let paramIndex = 1;
 
   if (data.name !== undefined) {
-    updateFields.push(`name = $${paramIndex++}`);
+    updateFields.push(`name = $${paramIndex++}::varchar`);
     updateValues.push(data.name);
   }
   if (data.subtitle !== undefined) {
-    updateFields.push(`subtitle = $${paramIndex++}`);
+    updateFields.push(`subtitle = $${paramIndex++}::text`);
     updateValues.push(data.subtitle || "بۆ پەیوەندی کردن, کلیک لەم لینکانەی خوارەوە بکە");
   }
   if (data.slug !== undefined) {
-    updateFields.push(`seo_name = $${paramIndex++}`);
+    updateFields.push(`seo_name = $${paramIndex++}::varchar`);
     updateValues.push(data.slug);
   }
   if (data.image !== undefined) {
-    updateFields.push(`image = $${paramIndex++}`);
-    updateValues.push(data.image);
+    updateFields.push(`image = $${paramIndex++}::text`);
+    updateValues.push(data.image ?? null);
   }
   if (data.background_color !== undefined) {
-    updateFields.push(`background_color = $${paramIndex++}`);
+    updateFields.push(`background_color = $${paramIndex++}::varchar`);
     updateValues.push(data.background_color);
   }
   if (data.template_config !== undefined) {
@@ -467,21 +467,21 @@ export async function updateLinktree(
     updateValues.push(JSON.stringify(data.template_config || {}));
   }
   if (data.expire_date !== undefined) {
-    updateFields.push(`expire_date = $${paramIndex++}`);
-    updateFields.push(`status = $${paramIndex++}`);
+    updateFields.push(`expire_date = $${paramIndex++}::timestamp`);
+    updateFields.push(`status = $${paramIndex++}::varchar`);
     updateValues.push(data.expire_date);
     updateValues.push(status);
   }
   if (data.footer_text !== undefined) {
-    updateFields.push(`footer_text = $${paramIndex++}`);
-    updateValues.push(data.footer_text);
+    updateFields.push(`footer_text = $${paramIndex++}::text`);
+    updateValues.push(data.footer_text ?? null);
   }
   if (data.footer_phone !== undefined) {
-    updateFields.push(`footer_phone = $${paramIndex++}`);
-    updateValues.push(data.footer_phone);
+    updateFields.push(`footer_phone = $${paramIndex++}::text`);
+    updateValues.push(data.footer_phone ?? null);
   }
   if (data.footer_hidden !== undefined) {
-    updateFields.push(`footer_hidden = $${paramIndex++}`);
+    updateFields.push(`footer_hidden = $${paramIndex++}::boolean`);
     updateValues.push(data.footer_hidden);
   }
 
@@ -499,12 +499,11 @@ export async function updateLinktree(
   
   // Add WHERE clause parameter
   updateValues.push(id);
-  paramIndex++;
 
   const result = await query<Linktree>(
     `UPDATE linktrees 
      SET ${updateFields.join(', ')}
-     WHERE id = $${paramIndex}
+     WHERE id = $${paramIndex}::uuid
      RETURNING id, name, subtitle, seo_name, uid, image, background_color, 
                template_config, expire_date, footer_text, footer_phone, footer_hidden, 
                status, created_at, updated_at`,
