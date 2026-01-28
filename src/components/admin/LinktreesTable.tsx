@@ -4,7 +4,7 @@ import { memo, useCallback, useState } from "react";
 import Image from "next/image";
 import { Trash2, Eye, Copy, Check, Edit } from "lucide-react";
 import { copyToClipboard } from "@/lib/utils/clipboard";
-import { formatDate, isExpired, getAbsoluteUrl } from "@/lib/utils/linktree-utils";
+import { formatDate, getAbsoluteUrl } from "@/lib/utils/linktree-utils";
 
 interface Linktree {
   id: string;
@@ -14,7 +14,6 @@ interface Linktree {
   seo_name?: string;
   uid: string;
   template_config?: Record<string, unknown> | null;
-  expire_date?: string;
   created_at: string;
   updated_at: string;
   analytics?: {
@@ -32,15 +31,14 @@ interface LinktreesTableProps {
 }
 
 // Memoized table row component for better performance
-const TableRow = memo(function TableRow({ 
-  item, 
-  onEdit, 
-  onDelete, 
-  onViewAnalytics, 
-  copiedUid, 
+const TableRow = memo(function TableRow({
+  item,
+  onEdit,
+  onDelete,
+  onViewAnalytics,
+  copiedUid,
   onCopy,
   formatDate,
-  isExpired,
 }: {
   item: Linktree;
   onEdit?: (id: string) => void;
@@ -49,7 +47,6 @@ const TableRow = memo(function TableRow({
   copiedUid: string | null;
   onCopy: (uid: string, e: React.MouseEvent) => void;
   formatDate: (dateString: string) => string;
-  isExpired: (expireDate?: string) => boolean;
 }) {
   const getLinktreeUrl = useCallback((uid: string) => {
     // Use relative URL for href to avoid hydration mismatch
@@ -124,21 +121,6 @@ const TableRow = memo(function TableRow({
             )}
           </button>
         </div>
-      </td>
-      <td className="px-2 sm:px-3 py-3 hidden sm:table-cell">
-        {item.expire_date ? (
-          <div
-            className={`text-xs ${
-              isExpired(item.expire_date)
-                ? "text-brand-600"
-                : "text-gray-700"
-            } break-words`}
-          >
-            {formatDate(item.expire_date)}
-          </div>
-        ) : (
-          <span className="text-gray-400 text-xs">—</span>
-        )}
       </td>
       <td className="px-2 sm:px-3 py-3 hidden xl:table-cell">
         <div className="text-xs text-gray-600 break-words">
@@ -228,10 +210,8 @@ export const LinktreesTable = memo(function LinktreesTable({ data = [], isLoadin
 
   // Mobile-friendly card view for narrow screens
   const MobileCard = memo(function MobileCard({ item, formatDate }: { item: Linktree; formatDate: (dateString: string) => string }) {
-    const expired = isExpired(item.expire_date);
-
     return (
-          <div className="border-b border-gray-200 bg-white p-4 flex gap-4 hover:bg-gray-50 transition-colors duration-200" onClick={() => handleView(item.uid)}>
+      <div className="border-b border-gray-200 bg-white p-4 flex gap-4 hover:bg-gray-50 transition-colors duration-200" onClick={() => handleView(item.uid)}>
         <div className="relative h-16 w-16 rounded-full overflow-hidden border border-gray-200 flex-shrink-0">
           <Image
             src={item.image || "/images/DefaultAvatar.png"}
@@ -287,10 +267,6 @@ export const LinktreesTable = memo(function LinktreesTable({ data = [], isLoadin
               {copiedUid === item.uid ? <Check className="h-3.5 w-3.5 text-green-600" /> : <Copy className="h-3.5 w-3.5 text-gray-500" />}
               <span className="font-mono">{item.uid === "ali" ? "/" : `/${item.uid}`}</span>
             </button>
-            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg border ${expired ? "border-brand-300 text-brand-700 bg-brand-50" : "border-gray-200 text-gray-700 bg-gray-50"}`}>
-              {expired ? "بەسەرچوو" : "ژماردن"}
-              <span className="font-mono">{item.expire_date ? formatDate(item.expire_date) : "—"}</span>
-            </span>
             <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg border border-gray-200 text-gray-600 bg-gray-50">
               دروستکراوە {formatDate(item.created_at)}
             </span>
@@ -334,9 +310,6 @@ export const LinktreesTable = memo(function LinktreesTable({ data = [], isLoadin
                 <th className="px-2 sm:px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide w-32 sm:w-40 lg:w-48">
                   UID
                 </th>
-                <th className="px-2 sm:px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide hidden sm:table-cell w-28 lg:w-32">
-                  بەسەرچوون
-                </th>
                 <th className="px-2 sm:px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide hidden xl:table-cell w-28">
                   دروستکراوە
                 </th>
@@ -351,7 +324,7 @@ export const LinktreesTable = memo(function LinktreesTable({ data = [], isLoadin
             <tbody className="bg-white">
               {isLoading ? (
                 <tr className="bg-white">
-                  <td colSpan={9} className="px-4 py-8 text-center text-gray-500 text-xs sm:text-sm bg-white">
+                  <td colSpan={8} className="px-4 py-8 text-center text-gray-500 text-xs sm:text-sm bg-white">
                     <div className="flex items-center justify-center gap-2">
                       <div className="w-4 h-4 border-2 border-gray-300 border-t-brand-600 rounded-full animate-spin" />
                       <span>Loading...</span>
@@ -360,7 +333,7 @@ export const LinktreesTable = memo(function LinktreesTable({ data = [], isLoadin
                 </tr>
               ) : data.length === 0 ? (
                 <tr className="bg-white">
-                  <td colSpan={9} className="px-4 py-8 text-center text-gray-500 text-xs sm:text-sm bg-white">
+                  <td colSpan={8} className="px-4 py-8 text-center text-gray-500 text-xs sm:text-sm bg-white">
                     هیچ داتایەک نەدۆزرایەوە
                   </td>
                 </tr>
@@ -375,7 +348,6 @@ export const LinktreesTable = memo(function LinktreesTable({ data = [], isLoadin
                     copiedUid={copiedUid}
                     onCopy={handleCopyUrl}
                     formatDate={formatDateString}
-                    isExpired={isExpired}
                   />
                 ))
               )}

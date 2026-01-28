@@ -110,13 +110,6 @@ export const DEFAULT_FOOTER_TEXT = DEFAULT_FOOTER_NAME; // Default footer name (
 export const DEFAULT_FOOTER_PHONE = GLOBAL_DEFAULT_FOOTER_PHONE;
 export const DEFAULT_WHATSAPP_MESSAGE = "";
 
-// Helper function to get default expire date (10 days from now)
-export const getDefaultExpireDate = (): string => {
-  const date = new Date();
-  date.setDate(date.getDate() + 10);
-  return date.toISOString().slice(0, 16);
-};
-
 // Kurdish platform names mapping
 export function getPlatformNameKurdish(platform: string): string {
   const names: Record<string, string> = {

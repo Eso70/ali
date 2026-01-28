@@ -23,18 +23,6 @@ export function formatDate(date: Date | string): string {
 }
 
 /**
- * Check if a date is expired
- */
-export function isExpired(expireDate?: string | null): boolean {
-  if (!expireDate) return false;
-  try {
-    return new Date(expireDate) < new Date();
-  } catch {
-    return false;
-  }
-}
-
-/**
  * Get absolute URL for a linktree UID
  */
 export function getAbsoluteUrl(uid: string): string {

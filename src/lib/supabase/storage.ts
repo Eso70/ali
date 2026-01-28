@@ -123,12 +123,12 @@ export function generateImageFilename(
 /**
  * Validate image file
  * @param file - File to validate
- * @param maxSizeMB - Maximum file size in MB (default: 5)
+ * @param maxSizeMB - Maximum file size in MB (default: 10)
  * @returns Validation result
  */
 export function validateImageFile(
   file: File,
-  maxSizeMB: number = 5
+  maxSizeMB: number = 10
 ): { valid: boolean; error?: string } {
   // Check file type
   const allowedTypes = [

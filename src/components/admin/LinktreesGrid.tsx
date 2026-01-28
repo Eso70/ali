@@ -4,7 +4,7 @@ import { memo, useCallback, useState, useMemo } from "react";
 import Image from "next/image";
 import { Trash2, Eye, Copy, Check, Edit, ExternalLink, Link as LinkIcon } from "lucide-react";
 import { copyToClipboard } from "@/lib/utils/clipboard";
-import { formatDate, isExpired, getAbsoluteUrl } from "@/lib/utils/linktree-utils";
+import { getAbsoluteUrl } from "@/lib/utils/linktree-utils";
 
 interface Linktree {
   id: string;
@@ -14,7 +14,6 @@ interface Linktree {
   seo_name?: string;
   uid: string;
   template_config?: Record<string, unknown> | null;
-  expire_date?: string;
   created_at: string;
   updated_at: string;
   analytics?: {
@@ -76,17 +75,6 @@ const LinktreeCard = memo(function LinktreeCard({
             <p className="text-xs text-gray-600 line-clamp-2 mb-1 sm:mb-1.5">
               {item.subtitle}
             </p>
-          )}
-          {item.expire_date && (
-            <div className="flex items-center gap-1 sm:gap-1.5 text-xs">
-              <span className={`font-mono px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border text-xs ${
-                isExpired(item.expire_date)
-                  ? "bg-rose-50 border-rose-200 text-rose-600"
-                  : "bg-gray-50 border-gray-200 text-gray-600"
-              }`}>
-                {formatDate(item.expire_date)}
-              </span>
-            </div>
           )}
         </div>
       </div>

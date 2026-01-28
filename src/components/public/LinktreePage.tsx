@@ -171,6 +171,12 @@ export const LinktreePage = memo(function LinktreePage({ linktree, links }: Link
     
     const modal = modalConfig as Record<string, unknown>;
     
+    // Check if modal is enabled - if false or not set, return null to disable modal
+    const enabled = typeof modal.enabled === 'boolean' ? modal.enabled : true;
+    if (!enabled) {
+      return null;
+    }
+    
     // Extract questions array - completely dynamic, any IDs allowed
     let questions: WhatsAppQuestion[] | undefined;
     if (Array.isArray(modal.questions)) {
@@ -211,8 +217,18 @@ export const LinktreePage = memo(function LinktreePage({ linktree, links }: Link
       queueClick(linkId, linktree.id);
     }
 
-    // For WhatsApp, show question modal instead of opening directly
+    // For WhatsApp, show question modal if enabled, otherwise open directly
     if (platform === "whatsapp") {
+      // If modal is disabled or has no questions, open WhatsApp URL directly
+      if (!whatsappModalConfig || !whatsappModalConfig.questions || whatsappModalConfig.questions.length === 0) {
+        try {
+          window.open(url, "_blank", "noopener,noreferrer");
+        } catch {
+          // Ignore popup blockers; user can tap again
+        }
+        return;
+      }
+      // Otherwise, show the modal
       setPendingWhatsAppUrl(url);
       setIsWhatsAppModalOpen(true);
       return;
@@ -227,7 +243,7 @@ export const LinktreePage = memo(function LinktreePage({ linktree, links }: Link
     } catch {
       // Ignore popup blockers; user can tap again
     }
-  }, [linktree.id]);
+  }, [linktree.id, whatsappModalConfig]);
 
   // Handle WhatsApp question selection
   const handleWhatsAppQuestionSelect = useCallback((message: string) => {

@@ -201,15 +201,6 @@ const linktreeBaseSchema = z.object({
     .optional()
     .nullable(),
   background_color: z.enum(BACKGROUND_COLORS),
-  expire_date: z
-    .string()
-    .datetime()
-    .optional()
-    .nullable()
-    .refine(
-      (date) => !date || new Date(date) > new Date(),
-      "Expire date must be in the future"
-    ),
   footer_text: z.string().max(200).optional().nullable(),
   footer_phone: z
     .string()
@@ -240,7 +231,6 @@ export const createLinktreeSchema = linktreeBaseSchema.extend({
 });
 
 // Update linktree schema (all fields optional except validation)
-// Note: expire_date validation is relaxed for updates - we allow past dates to update expired linktrees
 export const updateLinktreeSchema = linktreeBaseSchema.partial().extend({
   name: z
     .string()
@@ -257,12 +247,6 @@ export const updateLinktreeSchema = linktreeBaseSchema.partial().extend({
     .optional(),
   background_color: z.enum(BACKGROUND_COLORS).optional(),
   template_key: templateKeySchema.optional(),
-  // For updates, allow past dates (expired linktrees can be updated)
-  expire_date: z
-    .string()
-    .datetime()
-    .optional()
-    .nullable(),
 });
 
 // Batch links update schema
@@ -285,7 +269,6 @@ export const editDataResponseSchema = z.object({
     uid: z.string().min(1),
     image: z.string().nullable().optional(),
     background_color: z.string().min(1),
-    expire_date: z.string().nullable().optional(),
     footer_text: z.string().nullable().optional(),
     footer_phone: z.string().nullable().optional(),
     template_config: z.record(z.string(), z.unknown()).nullable().optional(),

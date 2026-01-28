@@ -2,16 +2,14 @@
 
 import { memo, useState, useEffect, useMemo, useCallback, useRef, startTransition } from "react";
 import { X, Loader2 } from "lucide-react";
-import { DateTimePicker } from "@/components/ui/DateTimePicker";
 import { BasicInfoStep } from "./steps/BasicInfoStep";
 import { PlatformSelectionStep } from "./steps/PlatformSelectionStep";
 import { LinksStep } from "./steps/LinksStep";
-import { 
-  BACKGROUND_COLORS, 
-  DEFAULT_SUBTITLE, 
-  DEFAULT_FOOTER_TEXT, 
+import {
+  BACKGROUND_COLORS,
+  DEFAULT_SUBTITLE,
+  DEFAULT_FOOTER_TEXT,
   DEFAULT_FOOTER_PHONE,
-  getDefaultExpireDate,
   getPlatformNameKurdish
 } from "./modal-constants";
 import { buildSlugFromName, generateUrl, extractValueFromUrl } from "./modal-utils";
@@ -41,7 +39,6 @@ interface EditLinkData {
     image?: string;
     background_color: string;
     template_config?: Record<string, unknown> | null;
-    expire_date?: string;
     footer_text?: string;
     footer_phone?: string;
     footer_hidden?: boolean;
@@ -70,7 +67,6 @@ interface CreateLinktreeModalProps {
     background_color: string;
     templateKey: TemplateKey;
     templateConfig: Record<string, unknown>;
-    expire_date?: string;
     footer_text?: string;
     footer_phone?: string;
     footer_hidden?: boolean;
@@ -97,7 +93,6 @@ export const CreateLinktreeModal = memo(function CreateLinktreeModal({
   const [slug, setSlug] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("pure-black");
   const [templateKey, setTemplateKey] = useState<TemplateKey>(TEMPLATE_DEFAULT_ID);
-  const [expiresAt, setExpiresAt] = useState(getDefaultExpireDate());
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -107,6 +102,7 @@ export const CreateLinktreeModal = memo(function CreateLinktreeModal({
   const [templateConfig, setTemplateConfig] = useState<Record<string, unknown>>(() => normalizeTemplateConfig(TEMPLATE_DEFAULT_ID, null));
   
   // WhatsApp modal questions state
+  const [whatsappModalEnabled, setWhatsappModalEnabled] = useState(true);
   const [whatsappModalTitle, setWhatsappModalTitle] = useState("پەیوەندی کردن");
   const [whatsappModalSubtitle, setWhatsappModalSubtitle] = useState("پرسیارێک هەڵبژێرە");
   const [whatsappQuestions, setWhatsappQuestions] = useState<WhatsAppQuestion[]>([
@@ -322,12 +318,12 @@ export const CreateLinktreeModal = memo(function CreateLinktreeModal({
   const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Check file size (500KB = 512000 bytes)
-      const maxSizeBytes = 512000;
+      // Check file size (10MB = 10485760 bytes)
+      const maxSizeBytes = 10485760;
       if (file.size > maxSizeBytes) {
         setErrors(prev => ({
           ...prev,
-          image: `قەبارەی وێنە نابێت لە  500kb زیاتر بێت.`
+          image: `قەبارەی وێنە نابێت لە  10MB زیاتر بێت.`
         }));
         // Reset file input
         if (fileInputRef.current) {
@@ -466,6 +462,9 @@ export const CreateLinktreeModal = memo(function CreateLinktreeModal({
       const whatsappModal = (linktree.template_config as Record<string, unknown> | null)?.whatsapp_modal;
       if (whatsappModal && typeof whatsappModal === 'object' && !Array.isArray(whatsappModal)) {
         const modal = whatsappModal as Record<string, unknown>;
+        // Load enabled flag, default to true if not found (backward compatibility)
+        const enabled = typeof modal.enabled === 'boolean' ? modal.enabled : true;
+        setWhatsappModalEnabled(enabled);
         if (typeof modal.title === 'string') setWhatsappModalTitle(modal.title);
         if (typeof modal.subtitle === 'string') setWhatsappModalSubtitle(modal.subtitle);
         if (Array.isArray(modal.questions)) {
@@ -490,25 +489,7 @@ export const CreateLinktreeModal = memo(function CreateLinktreeModal({
           if (questions.length > 0) setWhatsappQuestions(questions);
         }
       }
-      
-      // Validate and set expiry date
-      let expiryDate: string;
-      if (linktree.expire_date) {
-        try {
-          const dateObj = new Date(linktree.expire_date);
-          if (isNaN(dateObj.getTime())) {
-            expiryDate = getDefaultExpireDate();
-          } else {
-            expiryDate = dateObj.toISOString().slice(0, 16);
-          }
-        } catch {
-          expiryDate = getDefaultExpireDate();
-        }
-      } else {
-        expiryDate = getDefaultExpireDate();
-      }
-      setExpiresAt(expiryDate);
-      
+
       // Sanitize footer text (max 200 chars)
       const sanitizedFooterText = (linktree.footer_text || "").trim().slice(0, 200);
       // Always default to "Ali Network" if empty
@@ -591,13 +572,13 @@ export const CreateLinktreeModal = memo(function CreateLinktreeModal({
       setBackgroundColor("pure-black");
       setTemplateKey(TEMPLATE_DEFAULT_ID);
       setTemplateConfig(normalizeTemplateConfig(TEMPLATE_DEFAULT_ID, null));
-      setExpiresAt(getDefaultExpireDate());
       setProfileImage(null);
       setProfileImagePreview(null);
       setSelectedPlatforms([]);
       setSocialLinks([]);
       setFooterText(DEFAULT_FOOTER_TEXT);
       setFooterPhone(DEFAULT_FOOTER_PHONE);
+      setWhatsappModalEnabled(true);
       setWhatsappModalTitle("پەیوەندی کردن");
       setWhatsappModalSubtitle("پرسیارێک هەڵبژێرە");
       setWhatsappQuestions([
@@ -1067,21 +1048,6 @@ export const CreateLinktreeModal = memo(function CreateLinktreeModal({
       }
 
       // ============================================
-      // FORMAT EXPIRY DATE
-      // ============================================
-      const expireDateValue = expiresAt && expiresAt.trim() ? expiresAt : getDefaultExpireDate();
-      let expireDate: string;
-      try {
-        const dateObj = new Date(expireDateValue);
-        if (isNaN(dateObj.getTime())) {
-          throw new Error("Invalid date");
-        }
-        expireDate = dateObj.toISOString();
-      } catch {
-        expireDate = new Date(getDefaultExpireDate()).toISOString();
-      }
-
-      // ============================================
       // SANITIZE TEXT FIELDS
       // ============================================
       const sanitizedSubtitle = subtitle.trim() || "بۆ پەیوەندی کردن, کلیک لەم لینکانەی خوارەوە بکە";
@@ -1116,14 +1082,15 @@ export const CreateLinktreeModal = memo(function CreateLinktreeModal({
       // Store WhatsApp modal config in template_config before normalization
       const templateConfigWithMessage = {
         ...templateConfig,
-        // Only include whatsapp_modal if questions exist
-        ...(whatsappQuestions.length > 0 ? {
-          whatsapp_modal: {
+        // Include whatsapp_modal with enabled flag
+        whatsapp_modal: {
+          enabled: whatsappModalEnabled,
+          ...(whatsappModalEnabled && whatsappQuestions.length > 0 ? {
             title: whatsappModalTitle.trim() || "پەیوەندی کردن",
             subtitle: whatsappModalSubtitle.trim() || "پرسیارێک هەڵبژێرە",
             questions: whatsappQuestions.filter(q => q.text.trim() && q.message.trim()),
-          },
-        } : {}),
+          } : {}),
+        },
       };
       const normalizedTemplateConfig = normalizeTemplateConfig(selectedTemplateKey, templateConfigWithMessage);
 
@@ -1135,7 +1102,6 @@ export const CreateLinktreeModal = memo(function CreateLinktreeModal({
         background_color: selectedBgColor,
         templateKey: selectedTemplateKey,
         templateConfig: normalizedTemplateConfig,
-        expire_date: expireDate,
         footer_text: sanitizedFooterText,
         footer_phone: sanitizedFooterPhone,
         footer_hidden: footerHidden,
@@ -1314,17 +1280,6 @@ export const CreateLinktreeModal = memo(function CreateLinktreeModal({
               </p>
             </div>
             <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-              {editData?.linktree.uid !== "ali" && (
-                <div className="hidden sm:block">
-                  <DateTimePicker
-                    value={expiresAt}
-                    onChange={setExpiresAt}
-                    placeholder="بەرواری کۆتایی"
-                    minDate={new Date()}
-                    startYearFromCurrent={true}
-                  />
-                </div>
-              )}
               <button
                 type="button"
                 onClick={onClose}
@@ -1414,6 +1369,8 @@ export const CreateLinktreeModal = memo(function CreateLinktreeModal({
                 onFooterTextChange={setFooterText}
                 onFooterPhoneChange={setFooterPhone}
                 onFooterHiddenChange={setFooterHidden}
+                whatsappModalEnabled={whatsappModalEnabled}
+                onWhatsappModalEnabledChange={setWhatsappModalEnabled}
                 whatsappModalTitle={whatsappModalTitle}
                 whatsappModalSubtitle={whatsappModalSubtitle}
                 whatsappQuestions={whatsappQuestions}

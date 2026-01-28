@@ -3,7 +3,7 @@
 import { memo, useState, useEffect, useCallback, useRef } from "react";
 import { AdminHeader } from "@/components/AdminHeader";
 import { DeleteLinktreeModal } from "@/components/admin/DeleteLinktreeModal";
-import { LayoutGrid, Table2, FileText, AlertCircle, Eye, MousePointerClick } from "lucide-react";
+import { LayoutGrid, Table2, FileText, Eye, MousePointerClick } from "lucide-react";
 import dynamic from "next/dynamic";
 import { normalizeTemplateConfig, type TemplateKey } from "@/lib/templates/config";
 import { StatCard } from "@/components/admin/analytics/StatCard";
@@ -47,7 +47,6 @@ interface Linktree {
   uid: string;
   background_color: string;
   template_config?: Record<string, unknown> | null;
-  expire_date?: string;
   created_at: string;
   updated_at: string;
   analytics?: {
@@ -344,7 +343,6 @@ export const AdminDashboard = memo(function AdminDashboard({
     background_color: string;
     templateKey: TemplateKey;
     templateConfig: Record<string, unknown>;
-    expire_date?: string;
     footer_text?: string;
     footer_phone?: string;
     footer_hidden?: boolean;
@@ -406,7 +404,6 @@ export const AdminDashboard = memo(function AdminDashboard({
             image: data.image || null,
             background_color: data.background_color,
             template_config: normalizedTemplateConfig,
-            expire_date: data.expire_date || null,
             footer_text: data.footer_text?.trim() || null,
             footer_phone: data.footer_phone?.trim() || null,
             footer_hidden: data.footer_hidden ?? false,
@@ -669,7 +666,6 @@ export const AdminDashboard = memo(function AdminDashboard({
             image: data.image || null,
             background_color: data.background_color,
             template_config: normalizedTemplateConfig,
-            expire_date: data.expire_date || null,
             footer_text: data.footer_text?.trim() || null,
             footer_phone: data.footer_phone?.trim() || null,
             platforms: data.platforms,
@@ -738,9 +734,9 @@ export const AdminDashboard = memo(function AdminDashboard({
   }
 
   return (
-    <div 
+    <div
       className="h-screen flex flex-col overflow-hidden bg-white"
-      data-admin-dashboard
+      suppressHydrationWarning
     >
       <AdminHeader 
         onCreateNew={handleCreateNew} 
@@ -756,7 +752,7 @@ export const AdminDashboard = memo(function AdminDashboard({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-6 md:py-8 lg:py-10">
           {/* Stats Cards */}
           <div className="mb-6 sm:mb-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-3 gap-3 sm:gap-4">
               <StatCard
                 icon={FileText}
                 label="کۆی پەیجەکان"
@@ -774,15 +770,6 @@ export const AdminDashboard = memo(function AdminDashboard({
                 label="کۆی کلیکەکان"
                 value={analyticsTotals.unique_clicks}
                 color="green"
-              />
-              <StatCard
-                icon={AlertCircle}
-                label="پەیجە بەسەرچووەکان"
-                value={linktreesData.filter(item => {
-                  if (!item.expire_date) return false;
-                  return new Date(item.expire_date) < new Date();
-                }).length}
-                color="orange"
               />
             </div>
           </div>

@@ -143,7 +143,6 @@ export async function PATCH(
       image?: string | null;
       background_color?: string;
       template_config?: Record<string, unknown> | null;
-      expire_date?: string;
       footer_text?: string;
       footer_phone?: string;
       footer_hidden?: boolean;
@@ -167,7 +166,6 @@ export async function PATCH(
         baseTemplateConfig
       );
     }
-    if (validatedData.expire_date !== undefined) updateData.expire_date = validatedData.expire_date ?? undefined;
     if (validatedData.footer_text !== undefined) updateData.footer_text = validatedData.footer_text ?? undefined;
     if (validatedData.footer_phone !== undefined) updateData.footer_phone = validatedData.footer_phone ?? undefined;
     if (validatedData.footer_hidden !== undefined) updateData.footer_hidden = validatedData.footer_hidden;

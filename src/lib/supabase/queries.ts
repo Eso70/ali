@@ -95,7 +95,6 @@ export interface Linktree {
   image?: string;
   background_color: string;
   template_config?: Record<string, unknown> | null;
-  expire_date?: string;
   footer_text?: string;
   footer_phone?: string;
   footer_hidden?: boolean;
@@ -136,7 +135,6 @@ export interface CreateLinktreeData {
   image?: string | null;
   background_color: string;
   template_config?: Record<string, unknown> | null;
-  expire_date?: string;
   footer_text?: string;
   footer_phone?: string;
   footer_hidden?: boolean;
@@ -152,7 +150,6 @@ export interface UpdateLinktreeData {
   image?: string | null;
   background_color?: string;
   template_config?: Record<string, unknown> | null;
-  expire_date?: string;
   footer_text?: string;
   footer_phone?: string;
   footer_hidden?: boolean;
@@ -169,7 +166,7 @@ export interface UpdateLinktreeData {
  */
 export async function getAllLinktrees(_includeAnalytics = false): Promise<Linktree[]> {
   const result = await query<Linktree>(
-    `SELECT id, name, subtitle, seo_name, uid, image, background_color, template_config, expire_date, 
+    `SELECT id, name, subtitle, seo_name, uid, image, background_color, template_config,
      footer_text, footer_phone, footer_hidden, status, created_at, updated_at
      FROM linktrees
      ORDER BY created_at DESC`
@@ -184,7 +181,7 @@ export async function getAllLinktrees(_includeAnalytics = false): Promise<Linktr
  */
 export async function getLinktreeById(id: string): Promise<Linktree | null> {
   const result = await query<Linktree>(
-    `SELECT id, name, subtitle, seo_name, uid, image, background_color, template_config, expire_date, 
+    `SELECT id, name, subtitle, seo_name, uid, image, background_color, template_config,
      footer_text, footer_phone, footer_hidden, status, created_at, updated_at
      FROM linktrees
      WHERE id = $1`,
@@ -204,7 +201,7 @@ export async function getLinktreeById(id: string): Promise<Linktree | null> {
  */
 export async function getLinktreeByUid(uid: string): Promise<Linktree | null> {
   const result = await query<Linktree>(
-    `SELECT id, name, subtitle, seo_name, uid, image, background_color, template_config, expire_date, 
+    `SELECT id, name, subtitle, seo_name, uid, image, background_color, template_config,
      footer_text, footer_phone, footer_hidden, status, created_at, updated_at
      FROM linktrees
      WHERE uid = $1`,
@@ -217,11 +214,6 @@ export async function getLinktreeByUid(uid: string): Promise<Linktree | null> {
 
   const linktree = result.rows[0];
 
-  // Check if expired
-  if (linktree.expire_date && new Date(linktree.expire_date) < new Date()) {
-    return null;
-  }
-
   return linktree;
 }
 
@@ -231,7 +223,7 @@ export async function getLinktreeByUid(uid: string): Promise<Linktree | null> {
  */
 export async function getLinktreeBySeoName(seoName: string): Promise<Linktree | null> {
   const result = await query<Linktree>(
-    `SELECT id, name, subtitle, seo_name, uid, image, background_color, template_config, expire_date, created_at, updated_at
+    `SELECT id, name, subtitle, seo_name, uid, image, background_color, template_config, created_at, updated_at
      FROM linktrees
      WHERE seo_name = $1`,
     [seoName]
@@ -242,11 +234,6 @@ export async function getLinktreeBySeoName(seoName: string): Promise<Linktree | 
   }
 
   const linktree = result.rows[0];
-
-  // Check if expired
-  if (linktree.expire_date && new Date(linktree.expire_date) < new Date()) {
-    return null;
-  }
 
   return linktree;
 }
@@ -280,8 +267,7 @@ export async function createLinktree(data: CreateLinktreeData): Promise<Linktree
     throw new Error("Failed to generate unique identifier after multiple attempts");
   }
 
-  // Determine status based on expire_date
-  const status = data.expire_date && new Date(data.expire_date) < new Date() ? 'Expired' : 'Active';
+  const status = 'Active';
 
   // Use transaction for atomicity
   return await transaction(async (client) => {
@@ -289,10 +275,10 @@ export async function createLinktree(data: CreateLinktreeData): Promise<Linktree
     const linktreeResult = await client.query<Linktree>(
       `INSERT INTO linktrees (
         name, subtitle, seo_name, uid, image, background_color, template_config,
-        expire_date, footer_text, footer_phone, footer_hidden, status
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-      RETURNING id, name, subtitle, seo_name, uid, image, background_color, 
-                template_config, expire_date, footer_text, footer_phone, status, created_at, updated_at`,
+        footer_text, footer_phone, footer_hidden, status
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      RETURNING id, name, subtitle, seo_name, uid, image, background_color,
+                template_config, footer_text, footer_phone, status, created_at, updated_at`,
       [
         data.name,
         data.subtitle || "بۆ پەیوەندی کردن, کلیک لەم لینکانەی خوارەوە بکە",
@@ -301,7 +287,6 @@ export async function createLinktree(data: CreateLinktreeData): Promise<Linktree
         data.image || null,
         data.background_color,
         JSON.stringify(data.template_config || {}),
-        data.expire_date || null,
         data.footer_text || null,
         data.footer_phone || null,
         data.footer_hidden ?? false,
@@ -422,9 +407,6 @@ export async function updateLinktree(
   id: string,
   data: UpdateLinktreeData
 ): Promise<Linktree> {
-  // Determine status based on expire_date
-  const status = data.expire_date && new Date(data.expire_date) < new Date() ? 'Expired' : 'Active';
-
   // If updating image (including setting to null), get the old image path first to delete it later
   let oldImagePath: string | null = null;
   if (data.image !== undefined) {
@@ -466,12 +448,6 @@ export async function updateLinktree(
     updateFields.push(`template_config = $${paramIndex++}::jsonb`);
     updateValues.push(JSON.stringify(data.template_config || {}));
   }
-  if (data.expire_date !== undefined) {
-    updateFields.push(`expire_date = $${paramIndex++}::timestamp`);
-    updateFields.push(`status = $${paramIndex++}::varchar`);
-    updateValues.push(data.expire_date);
-    updateValues.push(status);
-  }
   if (data.footer_text !== undefined) {
     updateFields.push(`footer_text = $${paramIndex++}::text`);
     updateValues.push(data.footer_text ?? null);
@@ -501,11 +477,11 @@ export async function updateLinktree(
   updateValues.push(id);
 
   const result = await query<Linktree>(
-    `UPDATE linktrees 
+    `UPDATE linktrees
      SET ${updateFields.join(', ')}
      WHERE id = $${paramIndex}::uuid
-     RETURNING id, name, subtitle, seo_name, uid, image, background_color, 
-               template_config, expire_date, footer_text, footer_phone, footer_hidden, 
+     RETURNING id, name, subtitle, seo_name, uid, image, background_color,
+               template_config, footer_text, footer_phone, footer_hidden,
                status, created_at, updated_at`,
     updateValues
   );
@@ -516,18 +492,9 @@ export async function updateLinktree(
 
   const linktree = result.rows[0];
   
-  // Delete old image file if:
-  // 1. A new image was uploaded (image changed)
-  // 2. Image was removed (image set to null)
-  // Do this after successful database update to avoid orphaned files on failure
-  if (oldImagePath && data.image !== undefined && data.image !== oldImagePath) {
-    try {
-      await deleteImage(oldImagePath);
-    } catch (error) {
-      // Log error but don't fail the update if image deletion fails
-      console.error(`Failed to delete old image for linktree ${id}:`, error);
-    }
-  }
+  // Images are never deleted to prevent broken image links
+  // Old images are kept in storage even when new images are uploaded
+  // This ensures images are never broken or removed
   
   // Parse JSON fields
   if (typeof linktree.template_config === 'string') {
@@ -539,12 +506,12 @@ export async function updateLinktree(
 
 /**
  * Delete a linktree (cascades to links)
- * Also deletes associated image file from storage
+ * Images are preserved in storage to prevent broken image links
  */
 export async function deleteLinktree(id: string): Promise<void> {
-  // First, get the linktree to retrieve the image path before deletion
-  const linktreeResult = await query<{ image: string | null }>(
-    "SELECT image FROM linktrees WHERE id = $1",
+  // Verify linktree exists before deletion
+  const linktreeResult = await query<{ id: string }>(
+    "SELECT id FROM linktrees WHERE id = $1",
     [id]
   );
 
@@ -552,17 +519,9 @@ export async function deleteLinktree(id: string): Promise<void> {
     throw new Error("Linktree not found");
   }
 
-  const imagePath = linktreeResult.rows[0]?.image;
-
-  // Delete the image file if it exists
-  if (imagePath) {
-    try {
-      await deleteImage(imagePath);
-    } catch (error) {
-      // Log error but don't fail the deletion if image deletion fails
-      console.error(`Failed to delete image for linktree ${id}:`, error);
-    }
-  }
+  // Images are never deleted to prevent broken image links
+  // Images remain in storage even when linktrees are deleted
+  // This ensures images are never broken or removed
 
   // Delete the linktree from database (cascades to links)
   const result = await query(
@@ -619,26 +578,21 @@ export async function getLinktreeIdByUid(uid: string): Promise<string | null> {
   if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
     return cached.id;
   }
-  
-  const result = await query<{ id: string; expire_date: string | null }>(
-    "SELECT id, expire_date FROM linktrees WHERE uid = $1",
+
+  const result = await query<{ id: string }>(
+    "SELECT id FROM linktrees WHERE uid = $1",
     [uid]
   );
-  
+
   if (!result.rows || result.rows.length === 0) {
     return null;
   }
-  
+
   const row = result.rows[0];
-  
-  // Check if expired
-  if (row.expire_date && new Date(row.expire_date) < new Date()) {
-    return null;
-  }
-  
+
   // Cache the result
   uidToIdCache.set(uid, { id: row.id, timestamp: Date.now() });
-  
+
   // Limit cache size (keep last 1000 entries)
   if (uidToIdCache.size > 1000) {
     const firstKey = uidToIdCache.keys().next().value;
@@ -646,7 +600,7 @@ export async function getLinktreeIdByUid(uid: string): Promise<string | null> {
       uidToIdCache.delete(firstKey);
     }
   }
-  
+
   return row.id;
 }
 
@@ -654,7 +608,7 @@ export async function getLinktreeWithLinksByUid(uid: string): Promise<{ linktree
   // Get linktree
   const linktreeResult = await query<Linktree>(
     `SELECT id, name, subtitle, seo_name, uid, image, background_color, template_config,
-     expire_date, footer_text, footer_phone, footer_hidden, status, created_at, updated_at
+     footer_text, footer_phone, footer_hidden, status, created_at, updated_at
      FROM linktrees
      WHERE uid = $1`,
     [uid]
@@ -665,11 +619,6 @@ export async function getLinktreeWithLinksByUid(uid: string): Promise<{ linktree
   }
 
   const linktree = linktreeResult.rows[0];
-
-  // Check if expired
-  if (linktree.expire_date && new Date(linktree.expire_date) < new Date()) {
-    return { linktree: null, links: [] };
-  }
 
   // Get links
   const linksResult = await query<Link>(

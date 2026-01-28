@@ -19,6 +19,8 @@ interface BasicInfoStepProps {
   footerText: string;
   footerPhone: string;
   footerHidden: boolean;
+  whatsappModalEnabled: boolean;
+  onWhatsappModalEnabledChange: (value: boolean) => void;
   whatsappModalTitle: string;
   whatsappModalSubtitle: string;
   whatsappQuestions: WhatsAppQuestion[];
@@ -120,6 +122,8 @@ export const BasicInfoStep = memo(function BasicInfoStep({
   footerText,
   footerPhone,
   footerHidden,
+  whatsappModalEnabled,
+  onWhatsappModalEnabledChange,
   whatsappModalTitle,
   whatsappModalSubtitle,
   whatsappQuestions,
@@ -405,17 +409,37 @@ export const BasicInfoStep = memo(function BasicInfoStep({
 
       {/* WhatsApp Modal Questions Configuration */}
       <div className="space-y-3 p-4 sm:p-5 rounded-xl border border-gray-200 bg-gradient-to-br from-green-50/30 to-green-50/10">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-100 to-green-50 border border-green-200">
-            <MessageCircle className="h-4 w-4 text-green-600" />
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-100 to-green-50 border border-green-200">
+              <MessageCircle className="h-4 w-4 text-green-600" />
+            </div>
+            <h3 className="text-sm sm:text-base font-semibold text-gray-800 font-kurdish">
+              پرسیارەکانی واتساپ
+            </h3>
           </div>
-          <h3 className="text-sm sm:text-base font-semibold text-gray-800 font-kurdish">
-            پرسیارەکانی واتساپ
-          </h3>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={whatsappModalEnabled}
+            aria-label={whatsappModalEnabled ? "مۆدالی واتساپ چالاکە" : "مۆدالی واتساپ ناچالاکە"}
+            onClick={() => onWhatsappModalEnabledChange(!whatsappModalEnabled)}
+            className={`relative inline-flex h-7 w-12 sm:h-8 sm:w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 touch-manipulation active:scale-95 ${
+              whatsappModalEnabled ? 'bg-green-500' : 'bg-gray-300'
+            }`}
+          >
+            <span
+              className={`pointer-events-none inline-block h-6 w-6 sm:h-7 sm:w-7 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                whatsappModalEnabled ? 'translate-x-5 sm:translate-x-6' : 'translate-x-0.5 sm:translate-x-0.5'
+              }`}
+            />
+          </button>
         </div>
 
-        {/* Modal Title and Subtitle */}
-        <div className="space-y-3">
+        {whatsappModalEnabled && (
+          <>
+            {/* Modal Title and Subtitle */}
+            <div className="space-y-3">
           <div>
             <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
               سەردێڕی مۆدال
@@ -521,6 +545,8 @@ export const BasicInfoStep = memo(function BasicInfoStep({
             </div>
           )}
         </div>
+        </>
+        )}
       </div>
     </div>
 

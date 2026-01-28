@@ -57,7 +57,6 @@ export async function GET(
         image: linktree.image || null,
         background_color: linktree.background_color || "#6366f1",
         template_config: linktree.template_config || null,
-        expire_date: linktree.expire_date || null,
         footer_text: linktree.footer_text || null,
         footer_phone: linktree.footer_phone || null,
         footer_hidden: linktree.footer_hidden ?? false,

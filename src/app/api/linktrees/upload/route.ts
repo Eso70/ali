@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/get-session";
 import { uploadImage, generateImageFilename, validateImageFile } from "@/lib/supabase/storage";
 
+// Configure route to handle large file uploads (10MB)
+export const maxDuration = 60; // 60 seconds timeout for large uploads
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
   try {
     // Check admin session
@@ -25,7 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate image file
-    const validation = validateImageFile(file, 0.5); // 500KB limit
+    const validation = validateImageFile(file, 10); // 10MB limit
     if (!validation.valid) {
       return NextResponse.json(
         { error: validation.error || "Invalid image file" },

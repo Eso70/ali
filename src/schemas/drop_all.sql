@@ -204,7 +204,6 @@ DROP FUNCTION IF EXISTS get_all_linktrees_analytics_optimized() CASCADE;
 DROP FUNCTION IF EXISTS get_total_analytics_optimized() CASCADE;
 DROP FUNCTION IF EXISTS get_linktree_analytics_optimized(UUID) CASCADE;
 DROP FUNCTION IF EXISTS get_linktree_breakdowns_optimized(UUID) CASCADE;
-DROP FUNCTION IF EXISTS clear_analytics_data() CASCADE;
 
 -- Drop ALL remaining functions dynamically (catches everything, including overloaded functions)
 -- This ensures no function is left behind
